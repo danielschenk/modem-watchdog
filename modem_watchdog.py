@@ -55,15 +55,16 @@ def main():
     last_reboot_time = 0
     connected = False
 
-    if args.check_interval < 5:
-        args.check_interval = 5
+    minimum = 5
+    if args.check_interval < minimum:
+        print(f'warning: raising check interval to {minimum}')
+        args.check_interval = minimum
+    
     while True:
         if check_connection():
             if not connected:
                 connected = True
                 print('internet connection detected')
-            time.sleep(args.check_interval)
-
         else:
             if connected:
                 connected = False
@@ -71,8 +72,13 @@ def main():
 
             if (now := time.time()) - last_reboot_time > 180:
                 print('rebooting modem')
-                last_reboot_time = now
-                system.reboot()
+                try:
+                    system.reboot()
+                    last_reboot_time = now
+                except requests.exceptions.RequestException as e:
+                    print(f'failed to reboot modem: {e}')
+
+        time.sleep(args.check_interval if connected else 1)
 
 
 if __name__ == '__main__':
