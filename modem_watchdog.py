@@ -4,12 +4,24 @@ import argparse
 import simpletr64
 import requests
 import time
+import random
 
 
 def check_connection(attempts=3, timeout=2):
+    websites = [
+        'http://www.apple.com',
+        'http://www.github.com',
+        'http://www.microsoft.com',
+        'http://www.google.com',
+        'http://www.python.org',
+        'http://www.docker.com',
+        'http://www.git-scm.com',
+        'http://www.nrc.nl',
+        'http://www.nist.gov',
+    ]
     for _ in range(attempts):
         try:
-            requests.request('get', 'http://www.apple.com', timeout=timeout)
+            requests.request('get', random.choice(websites), timeout=timeout)
             return True
         except requests.exceptions.RequestException:
             pass
