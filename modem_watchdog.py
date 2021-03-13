@@ -112,6 +112,10 @@ def main():
                     last_reboot_time = now
                 except requests.exceptions.RequestException as e:
                     logger.error(f'failed to reboot modem: {e}')
+                except ValueError as e:
+                    if 'could not execute' not in str(e).lower():
+                        # not an exception of simpleTR64 as far as i know
+                        raise
 
         time.sleep(args.check_interval if connected else 1)
 
