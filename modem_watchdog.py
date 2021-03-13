@@ -38,6 +38,9 @@ def main():
     parser.add_argument('--check-interval',
                         default=20,
                         type=float)
+    parser.add_argument('--modem-reboot-interval',
+                        default=180,
+                        type=float)
     args = parser.parse_args()
 
     system = simpletr64.actions.System(args.address)
@@ -59,7 +62,7 @@ def main():
     if args.check_interval < minimum:
         print(f'warning: raising check interval to {minimum}')
         args.check_interval = minimum
-    
+
     while True:
         if check_connection():
             if not connected:
@@ -70,7 +73,7 @@ def main():
                 connected = False
                 print('internet connection lost')
 
-            if (now := time.time()) - last_reboot_time > 180:
+            if (now := time.time()) - last_reboot_time > args.modem_reboot_interval:
                 print('rebooting modem')
                 try:
                     system.reboot()
