@@ -5,6 +5,7 @@ import simpletr64
 import requests
 import time
 import random
+import logging
 
 
 def check_connection(attempts=3, timeout=2):
@@ -42,18 +43,37 @@ def main():
                         help='relative path to the TR-064 description file on the device',
                         default='tr64desc.xml')
     parser.add_argument('--username',
-                        help='username for authentication',
-                        default=None)
+                        help='username for authentication')
     parser.add_argument('--password',
-                        help='password for authentication',
-                        default=None)
+                        help='password for authentication')
     parser.add_argument('--check-interval',
                         default=20,
                         type=float)
     parser.add_argument('--modem-reboot-interval',
                         default=180,
                         type=float)
+    parser.add_argument('--logfile',
+                        help='log to specified file')
+    parser.add_argument('-v', '--verbose',
+                        help='verbose (enable debug messages on console)',
+                        action='store_true')
     args = parser.parse_args()
+
+    logger = logging.getLogger('modem_watchdog')
+    logger.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG if args.verbose else logging.INFO)
+    console_handler.setFormatter(formatter)
+
+    logger.addHandler(console_handler)
+    if args.logfile:
+        file_handler = logging.FileHandler(args.logfile)
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+        logger.debug(f'logging to file {args.logfile}')
+        logger.addHandler(file_handler)
 
     system = simpletr64.actions.System(args.address)
     if '://' not in args.address:
@@ -65,33 +85,33 @@ def main():
         system.password = args.password
 
     system.getTimeInfo()
-    print('modem communication works')
+    logger.info('TR-064 connection to modem succeeded')
 
     last_reboot_time = 0
     connected = False
 
     minimum = 5
     if args.check_interval < minimum:
-        print(f'warning: raising check interval to {minimum}')
+        logger.warning(f'raising check interval to {minimum}')
         args.check_interval = minimum
 
     while True:
         if check_connection():
             if not connected:
                 connected = True
-                print('internet connection detected')
+                logger.info('internet connection detected')
         else:
             if connected:
                 connected = False
-                print('internet connection lost')
+                logger.info('internet connection lost')
 
             if (now := time.time()) - last_reboot_time > args.modem_reboot_interval:
-                print('rebooting modem')
+                logger.info('rebooting modem')
                 try:
                     system.reboot()
                     last_reboot_time = now
                 except requests.exceptions.RequestException as e:
-                    print(f'failed to reboot modem: {e}')
+                    logger.error(f'failed to reboot modem: {e}')
 
         time.sleep(args.check_interval if connected else 1)
 
