@@ -50,7 +50,7 @@ def main():
                         default=20,
                         type=float)
     parser.add_argument('--modem-reboot-interval',
-                        default=180,
+                        default=600,
                         type=float)
     parser.add_argument('--logfile',
                         help='log to specified file')
