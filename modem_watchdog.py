@@ -22,11 +22,11 @@ def main():
     parser.add_argument('--address',
                         help='hostname / IP address of the TR-064 device',
                         default='fritz.box')
-    parser.add_argument('--tr64desc_port',
+    parser.add_argument('--tr64desc-port',
                         help='port of the web server serving the TR-064 description file on the device',
                         default=49000,
                         type=int)
-    parser.add_argument('--tr64desc_path',
+    parser.add_argument('--tr64desc-path',
                         help='relative path to the TR-064 description file on the device',
                         default='tr64desc.xml')
     parser.add_argument('--username',
@@ -35,8 +35,9 @@ def main():
     parser.add_argument('--password',
                         help='password for authentication',
                         default=None)
-    parser.add_argument('--check_interval',
-                        default=20)
+    parser.add_argument('--check-interval',
+                        default=20,
+                        type=float)
     args = parser.parse_args()
 
     system = simpletr64.actions.System(args.address)
@@ -47,6 +48,9 @@ def main():
         system.username = args.username
     if args.password:
         system.password = args.password
+
+    system.getTimeInfo()
+    print('modem communication works')
 
     last_reboot_time = 0
     connected = False
