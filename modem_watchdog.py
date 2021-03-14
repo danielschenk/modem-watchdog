@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-__version__ = '0.1'
+__version__ = '0.1.1'
 
 import argparse
 import simpletr64
@@ -36,6 +36,7 @@ def main():
 
     parser.add_argument('--address',
                         help='hostname / IP address of the TR-064 device',
+                        metavar='[HOST|IP]',
                         default='fritz.box')
     parser.add_argument('--port',
                         help='port of the TR-064 service on the device',
@@ -43,18 +44,24 @@ def main():
                         type=int)
     parser.add_argument('--tr64desc-path',
                         help='relative path to the TR-064 description file on the device',
+                        metavar='PATH',
                         default='tr64desc.xml')
     parser.add_argument('--username',
                         help='username for authentication')
     parser.add_argument('--password',
                         help='password for authentication')
     parser.add_argument('--check-interval',
+                        help='interval between internet connection checks, in seconds',
+                        metavar='VALUE',
                         default=20,
                         type=float)
-    parser.add_argument('--modem-reboot-interval',
+    parser.add_argument('--reboot-interval',
+                        help='interval between repeated modem reboots during internet outage, in seconds',
+                        metavar='VALUE',
                         default=600,
                         type=float)
     parser.add_argument('--logfile',
+                        metavar='PATH',
                         help='log to specified file')
     parser.add_argument('-v', '--verbose',
                         help='verbose (enable debug messages on console)',
