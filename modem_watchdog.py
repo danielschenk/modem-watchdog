@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-__version__ = '0.1.1'
+__version__ = '0.2'
 
 import argparse
 import simpletr64
@@ -119,7 +119,7 @@ def main():
                 connected = False
                 logger.info('internet connection lost')
 
-            if (now := time.time()) - last_reboot_time > args.modem_reboot_interval:
+            if (now := time.time()) - last_reboot_time > args.reboot_interval:
                 logger.info('rebooting modem')
                 try:
                     system.reboot()
