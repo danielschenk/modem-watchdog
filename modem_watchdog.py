@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+__version__ = '0.1'
+
 import argparse
 import simpletr64
 import requests
@@ -35,8 +37,8 @@ def main():
     parser.add_argument('--address',
                         help='hostname / IP address of the TR-064 device',
                         default='fritz.box')
-    parser.add_argument('--tr64desc-port',
-                        help='port of the web server serving the TR-064 description file on the device',
+    parser.add_argument('--port',
+                        help='port of the TR-064 service on the device',
                         default=49000,
                         type=int)
     parser.add_argument('--tr64desc-path',
@@ -57,6 +59,9 @@ def main():
     parser.add_argument('-v', '--verbose',
                         help='verbose (enable debug messages on console)',
                         action='store_true')
+    parser.add_argument('--version',
+                        action='version',
+                        version=f'%(prog)s {__version__}')
     args = parser.parse_args()
 
     logger = logging.getLogger('modem_watchdog')
@@ -75,10 +80,12 @@ def main():
         logger.debug(f'logging to file {args.logfile}')
         logger.addHandler(file_handler)
 
-    system = simpletr64.actions.System(args.address)
+    logger.info(f'started, version {__version__}')
+
+    system = simpletr64.actions.System(args.address, port=args.port)
     if '://' not in args.address:
         args.address = 'http://' + args.address
-    system.loadDeviceDefinitions(f'{args.address}:{args.tr64desc_port}/{args.tr64desc_path}')
+    system.loadDeviceDefinitions(f'{args.address}:{args.port}/{args.tr64desc_path}')
     if args.username:
         system.username = args.username
     if args.password:
