@@ -1,5 +1,7 @@
 modem-watchdog
 ==============
+![master build status](https://github.com/danielschenk/modem-watchdog/actions/workflows/docker-image.yml/badge.svg?branch=master)
+
 _A workaround for disappointing modems._
 
 This script monitors an internet connection and tries to reboot a TR064-compatible modem
