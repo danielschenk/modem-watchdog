@@ -13,15 +13,16 @@ Thanks to [bpannier](https://github.com/bpannier) for making the
 [simpleTR64 library](https://github.com/bpannier/simpletr64) used in this project.
 
 ## Running the script in a Docker container
-No builds of this Docker image are published (yet). However, it is very easy to build it locally,
-or even better, have docker-compose do that for you.
+Docker images are available for some common platforms. Alternatively, the image can be built locally.
 
 ### With docker-compose
 Add a service like this to your `docker-compose.yml`:
 ```yml
   modem-watchdog:
     container_name: modem-watchdog
-    build: https://github.com/danielschenk/modem-watchdog.git
+    image: danielschenk/modem-watchdog:0.2
+    # alternative: build locally
+    # build: https://github.com/danielschenk/modem-watchdog.git#v0.2.0
     restart: always
     environment:
       TZ: "Europe/Amsterdam" # change as needed, will ensure logging in local time
@@ -35,9 +36,12 @@ Add a service like this to your `docker-compose.yml`:
       - "bar"
 ```
 
-### Without docker-compose
-1. `docker build -t modem-watchdog https://github.com/danielschenk/modem-watchdog.git`
-2. `docker run -d modem-watchdog ./modem_watchdog.py --address 192.168.1.1 --username foo --password bar`
+### Without docker-compose (pull image)
+`docker run -d danielschenk/modem-watchdog:0.2 --address 192.168.1.1 --username foo --password bar`
+
+### Without docker-compose (build image locally)
+1. `docker build -t modem-watchdog https://github.com/danielschenk/modem-watchdog.git#v0.2.0`
+2. `docker run -d modem-watchdog --address 192.168.1.1 --username foo --password bar`
 
 ## Running the script directly
 Requirements:
