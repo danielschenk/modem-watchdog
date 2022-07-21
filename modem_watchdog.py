@@ -130,6 +130,8 @@ def main():
                     if 'could not execute' not in str(e).lower():
                         # not an exception of simpleTR64 as far as i know
                         raise
+                    else:
+                        logger.error(f'simpletr64: {e}')
 
         time.sleep(args.check_interval if connected else 1)
 
